@@ -6,7 +6,6 @@ on:
 
 jobs:
   benchmark:
-    if: ${{ github.event.label.name == 'benchmark-pr' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
