@@ -6,6 +6,7 @@ on:
 
 jobs:
   benchmark:
+    if: ${{ github.event.label.name == 'benchmark' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,5 +80,5 @@ jobs:
       - uses: actions-ecosystem/action-remove-labels@v1
         with:
           labels: |
-            benchmark-pr
+            benchmark
           github_token: ${{ secrets.GITHUB_TOKEN }}
