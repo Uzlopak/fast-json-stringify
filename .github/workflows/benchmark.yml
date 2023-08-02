@@ -31,13 +31,9 @@ jobs:
       - name: Run benchmark
         id: benchmark-pr
         run: |
-          npm run --silent bench > ./bench-result
-          content=$(cat ./bench-result)
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
+
           echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
-          echo $content >> $GITHUB_OUTPUT
+          npm run --silent bench >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       # master benchmark
@@ -52,13 +48,8 @@ jobs:
       - name: Run benchmark
         id: benchmark-master
         run: |
-          npm run --silent bench > ./bench-result
-          content=$(cat ./bench-result)
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
           echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
-          echo $content >> $GITHUB_OUTPUT
+          npm run --silent bench >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   output-benchmark:
