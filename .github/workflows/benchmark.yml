@@ -36,7 +36,9 @@ jobs:
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
-          echo "::set-output name=BENCH_RESULT::$content"
+          echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
+          echo $content >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
 
       # master benchmark
       - uses: actions/checkout@v3
@@ -55,7 +57,9 @@ jobs:
           content="${content//'%'/'%25'}"
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
-          echo "::set-output name=BENCH_RESULT::$content"
+          echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
+          echo $content >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
 
   output-benchmark:
     if: "always()"
