@@ -53,8 +53,8 @@ jobs:
           echo 'EOF' >> $GITHUB_OUTPUT
 
   output-benchmark:
-    if: "always()"
-    needs: [benchmark]
+    needs: 
+      - benchmark
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -72,9 +72,21 @@ jobs:
             ```
             ${{ needs.benchmark.outputs.MASTER-BENCH }}
             ```
-            
-      - uses: actions-ecosystem/action-remove-labels@v1
+
+  remove-label:
+    if: "always()"
+    needs: 
+      - benchmark
+      - output-benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove benchmark label
+        uses: octokit/request-action@v2.x
+        id: remove-label
         with:
-          labels: |
-            benchmark
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          route: DELETE /repos/{repo}/issues/{issue_number}/labels/{name}
+          repo: ${{ github.event.pull_request.head.repo.full_name }}
+          issue_number: ${{ github.event.pull_request.number }}
+          name: benchmark
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
