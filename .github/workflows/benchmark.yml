@@ -1,9 +1,12 @@
 name: Benchmark PR
 
 on:
-  pull_request_target:
-    types: 
-      - labeled
+  workflow_call:
+    inputs:
+      npm-script:
+        type: string
+        default: benchmark
+        required: false
 
 jobs:
   benchmark:
@@ -20,7 +23,6 @@ jobs:
       DEFAULT-BENCH-20: ${{ steps.benchmark-default.outputs.BENCH_RESULT_20 }}
 
     strategy:
-      max-parallel: 1
       matrix:
         node-version: [16, 18, 20]
     steps:
@@ -42,7 +44,7 @@ jobs:
         id: benchmark-pr
         run: |
           echo 'BENCH_RESULT_${{matrix.node-version}}<<EOF' >> $GITHUB_OUTPUT
-          npm run --silent bench >> $GITHUB_OUTPUT
+          npm run --silent ${{inputs.npm-script}} >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       # master benchmark
@@ -58,7 +60,7 @@ jobs:
         id: benchmark-default
         run: |
           echo 'BENCH_RESULT_${{matrix.node-version}}<<EOF' >> $GITHUB_OUTPUT
-          npm run --silent bench >> $GITHUB_OUTPUT
+          npm run --silent ${{inputs.npm-script}} >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   output-benchmark:
@@ -107,20 +109,3 @@ jobs:
             ${{ needs.benchmark.outputs.DEFAULT-BENCH-20 }}
             ```
 
-  remove-label:
-    if: "always()"
-    needs: 
-      - benchmark
-      - output-benchmark
-    runs-on: ubuntu-latest
-    steps:
-      - name: Remove benchmark label
-        uses: octokit/request-action@v2.x
-        id: remove-label
-        with:
-          route: DELETE /repos/{repo}/issues/{issue_number}/labels/{name}
-          repo: ${{ github.event.pull_request.head.repo.full_name }}
-          issue_number: ${{ github.event.pull_request.number }}
-          name: benchmark
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
