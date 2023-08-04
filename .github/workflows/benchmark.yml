@@ -73,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: |
             **Node**: 16
-            **PR**:
+            **${{github.event.pull_request.head.ref}}**:
             ```
             ${{ needs.benchmark.outputs.PR-BENCH-16 }}
             ```
@@ -85,7 +85,7 @@ jobs:
             ---
             
             **Node**: 18
-            **PR**:
+            **${{github.event.pull_request.head.ref}}**:
             ```
             ${{ needs.benchmark.outputs.PR-BENCH-18 }}
             ```
@@ -97,7 +97,7 @@ jobs:
             ---
             
             **Node**: 20
-            **PR**:
+            **${{github.event.pull_request.head.ref}}**:
             ```
             ${{ needs.benchmark.outputs.PR-BENCH-20 }}
             ```
