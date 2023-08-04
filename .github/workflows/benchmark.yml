@@ -12,8 +12,16 @@ jobs:
     permissions:
       contents: read
     outputs:
-      PR-BENCH: ${{ steps.benchmark-pr.outputs.BENCH_RESULT }}
-      DEFAULT-BENCH: ${{ steps.benchmark-default.outputs.BENCH_RESULT }}
+      PR-BENCH-16: ${{ steps.benchmark-pr.outputs.BENCH_RESULT_16 }}
+      PR-BENCH-18: ${{ steps.benchmark-pr.outputs.BENCH_RESULT_18 }}
+      PR-BENCH-20: ${{ steps.benchmark-pr.outputs.BENCH_RESULT_20 }}
+      DEFAULT-BENCH-16: ${{ steps.benchmark-default.outputs.BENCH_RESULT_16 }}
+      DEFAULT-BENCH-18: ${{ steps.benchmark-default.outputs.BENCH_RESULT_18 }}
+      DEFAULT-BENCH-20: ${{ steps.benchmark-default.outputs.BENCH_RESULT_20 }}
+
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,7 +31,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ matrix.node-version }}
 
       - name: Install
         run: |
@@ -32,7 +40,7 @@ jobs:
       - name: Run benchmark
         id: benchmark-pr
         run: |
-          echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
+          echo 'BENCH_RESULT_${{matrix.node-version}}<<EOF' >> $GITHUB_OUTPUT
           npm run --silent bench >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
@@ -48,7 +56,7 @@ jobs:
       - name: Run benchmark
         id: benchmark-default
         run: |
-          echo 'BENCH_RESULT<<EOF' >> $GITHUB_OUTPUT
+          echo 'BENCH_RESULT_${{matrix.node-version}}<<EOF' >> $GITHUB_OUTPUT
           npm run --silent bench >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
@@ -64,13 +72,38 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: |
+            **Node**: 16
             **PR**:
             ```
-            ${{ needs.benchmark.outputs.PR-BENCH }}
+            ${{ needs.benchmark.outputs.PR-BENCH-16 }}
             ```
             **${{ github.event.repository.default_branch }}**:
             ```
-            ${{ needs.benchmark.outputs.DEFAULT-BENCH }}
+            ${{ needs.benchmark.outputs.DEFAULT-BENCH-16 }}
+            ```
+
+            ---
+            
+            **Node**: 18
+            **PR**:
+            ```
+            ${{ needs.benchmark.outputs.PR-BENCH-18 }}
+            ```
+            **${{ github.event.repository.default_branch }}**:
+            ```
+            ${{ needs.benchmark.outputs.DEFAULT-BENCH-18 }}
+            ```
+            
+            ---
+            
+            **Node**: 20
+            **PR**:
+            ```
+            ${{ needs.benchmark.outputs.PR-BENCH-20 }}
+            ```
+            **${{ github.event.repository.default_branch }}**:
+            ```
+            ${{ needs.benchmark.outputs.DEFAULT-BENCH-20 }}
             ```
 
   remove-label:
