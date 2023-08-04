@@ -20,6 +20,7 @@ jobs:
       DEFAULT-BENCH-20: ${{ steps.benchmark-default.outputs.BENCH_RESULT_20 }}
 
     strategy:
+      max-parallel: 1
       matrix:
         node-version: [16, 18, 20]
     steps:
