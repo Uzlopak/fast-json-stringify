@@ -8,7 +8,7 @@ on:
 jobs:
   benchmark:
     if: ${{ github.event.label.name == 'benchmark' }}
-    uses: Uzlopak/fast-json-stringify/.github/workflows/benchmark.yml@master
+    uses: Fastify/workflows/.github/workflows/plugins-benchmark-pr.yml@benchmark
     with:
       npm-script: bench
 
